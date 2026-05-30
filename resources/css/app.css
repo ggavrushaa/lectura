@@ -16,6 +16,8 @@
   --ok:#3a9b7a; --ok-soft:#eaf6f1;
   --danger:#c0392b; --danger-soft:#fbeae8;
   --ring:rgba(194,98,10,.35);
+  /* фиксированный тёмный бренд-цвет для «контрастных» блоков (одинаков в обеих темах) */
+  --brand-dark:#1a1208; --brand-dark-2:#2a1505;
   --shadow-sm:0 1px 2px rgba(20,20,30,.04), 0 1px 3px rgba(20,20,30,.05);
   --shadow-md:0 4px 6px -2px rgba(20,20,30,.05), 0 12px 28px -10px rgba(20,20,30,.14);
   --shadow-lg:0 20px 50px -16px rgba(20,20,30,.22);

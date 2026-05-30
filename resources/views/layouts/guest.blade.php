@@ -16,7 +16,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr]">
+<body class="min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr] lg:min-h-screen" style="min-height:100vh">
 
     {{-- ═══════ ЛЕВО: брендовый showcase (скрыт на мобильных) ═══════ --}}
     <aside class="hidden lg:flex relative flex-col justify-between p-12 xl:p-16 overflow-hidden text-white"

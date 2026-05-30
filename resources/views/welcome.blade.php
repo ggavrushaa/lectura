@@ -162,7 +162,7 @@
 </section>
 
 {{-- ════════════════ ТЁМНЫЙ FULL-BLEED БЛОК — пример «было → стало» ════════════════ --}}
-<section class="full-bleed py-16 sm:py-24" style="background:linear-gradient(160deg, var(--ink), color-mix(in oklab, var(--ink) 72%, var(--accent)));">
+<section class="full-bleed py-16 sm:py-24" style="background:linear-gradient(160deg, var(--brand-dark), var(--brand-dark-2) 55%, color-mix(in oklab, var(--brand-dark) 70%, var(--accent)));">
   <div class="max-w-6xl mx-auto px-5 sm:px-7" style="color:#fff">
     <div class="text-center mb-12 reveal">
       <div class="text-xs font-semibold tracking-[.2em] uppercase" style="color:rgba(255,255,255,.55)">Пример</div>
@@ -184,14 +184,14 @@
       <div class="reveal hidden md:grid place-items-center w-12 h-12 rounded-full mx-auto" data-d="1" style="background:var(--accent);color:#fff">→</div>
 
       {{-- стало --}}
-      <div class="reveal rounded-2xl p-6" data-d="2" style="background:#fff;color:var(--ink);box-shadow:var(--shadow-lg)">
-        <div class="pill pill-accent mb-4">Конспект Lectura</div>
+      <div class="reveal rounded-2xl p-6" data-d="2" style="background:#fbfbfa;color:#16161a;box-shadow:var(--shadow-lg)">
+        <div class="pill mb-4" style="background:#fdf3e7;color:#c2620a;border:1px solid #f0ddc2">Конспект Lectura</div>
         <div class="font-serif-display text-xl mb-2">Нейронные сети: основы</div>
-        <p class="text-sm mb-3" style="color:var(--ink2)"><strong>Кратко.</strong> Модель из связанных нейронов; обучается подбором весов.</p>
-        <ul class="text-sm space-y-1.5" style="color:var(--ink2)">
-          <li class="flex gap-2"><span style="color:var(--accent)">›</span> Нейрон: вход → сумма → активация → выход</li>
-          <li class="flex gap-2"><span style="color:var(--accent)">›</span> Связи задаются весами</li>
-          <li class="flex gap-2"><span style="color:var(--accent)">›</span> Обучение — подбор весов на данных</li>
+        <p class="text-sm mb-3" style="color:#3a3a42"><strong>Кратко.</strong> Модель из связанных нейронов; обучается подбором весов.</p>
+        <ul class="text-sm space-y-1.5" style="color:#3a3a42">
+          <li class="flex gap-2"><span style="color:#c2620a">›</span> Нейрон: вход → сумма → активация → выход</li>
+          <li class="flex gap-2"><span style="color:#c2620a">›</span> Связи задаются весами</li>
+          <li class="flex gap-2"><span style="color:#c2620a">›</span> Обучение — подбор весов на данных</li>
         </ul>
       </div>
     </div>
@@ -286,7 +286,7 @@
   <div class="reveal full-bleed">
     <div class="max-w-4xl mx-auto px-5 sm:px-7">
       <div class="rounded-[1.75rem] p-10 sm:p-16 text-center relative overflow-hidden"
-           style="background:linear-gradient(135deg, var(--ink), color-mix(in oklab, var(--ink) 68%, var(--accent)));color:#fff">
+           style="background:linear-gradient(135deg, var(--brand-dark), var(--brand-dark-2) 50%, color-mix(in oklab, var(--brand-dark) 62%, var(--accent)));color:#fff">
         <div aria-hidden="true" class="pointer-events-none absolute -right-16 -top-16 w-64 h-64 rounded-full blur-3xl opacity-40" style="background:var(--accent)"></div>
         <h2 class="font-serif-display text-3xl sm:text-5xl mb-4 relative leading-tight">Следующую лекцию<br>не записывайте зря</h2>
         <p class="max-w-md mx-auto mb-8 relative" style="color:rgba(255,255,255,.7)">
