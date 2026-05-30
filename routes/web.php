@@ -5,9 +5,7 @@ use App\Http\Controllers\LectureExportController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn () => view('welcome'))->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [LectureController::class, 'index'])->name('dashboard');
