@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+:root{
+  --bg:#f7f7f5; --panel:#fff; --soft:#f3f3f1; --inset:#fbfbfa;
+  --ink:#16161a; --ink2:#3a3a42; --muted:#86868f; --line:#e9e9e6;
+  --accent:#c2620a; --accent-soft:#fdf3e7; --accent-line:#f5e2c8;
+  --ok:#3a9b7a; --ok-soft:#eaf6f1;
+}
+html.dark{
+  --bg:#0b0b0d; --panel:#141416; --soft:#1a1a1d; --inset:#101012;
+  --ink:#f4f4f5; --ink2:#c4c4cc; --muted:#7d7d87; --line:#242427;
+  --accent:#f5a623; --accent-soft:#2a1f0c; --accent-line:#43330f;
+  --ok:#5fcfa6; --ok-soft:#11221c;
+}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+.font-serif-display{font-family:Newsreader,serif}
