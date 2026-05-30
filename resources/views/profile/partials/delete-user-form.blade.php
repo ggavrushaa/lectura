@@ -34,7 +34,7 @@
                     id="password"
                     name="password"
                     type="password"
-                    class="w-3/4"
+                    class="w-full sm:w-3/4"
                     placeholder="Пароль"
                 />
 

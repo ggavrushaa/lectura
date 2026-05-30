@@ -1,4 +1,8 @@
 <x-guest-layout heading="Создать аккаунт" subheading="Меньше минуты — и можно загружать первую лекцию.">
+    <div class="space-y-4 mb-4">
+        <x-google-button label="Зарегистрироваться с Google" />
+    </div>
+
     <form method="POST" action="{{ route('register') }}" class="space-y-4">
         @csrf
 

@@ -1,6 +1,10 @@
 <x-guest-layout heading="С возвращением" subheading="Войдите, чтобы продолжить работу с конспектами.">
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <div class="space-y-4 mb-4">
+        <x-google-button label="Войти через Google" />
+    </div>
+
     <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
 

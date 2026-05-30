@@ -41,7 +41,7 @@
 
     {{-- Правая колонка: наклонённое окно с конспектом + плавающая «капсула загрузки» --}}
     <div class="relative anim-scale-in" style="animation-delay:.25s">
-      <div aria-hidden="true" class="absolute -inset-6 -z-10 rounded-[2rem] blur-2xl opacity-50"
+      <div aria-hidden="true" class="absolute inset-0 -z-10 rounded-[2rem] blur-2xl opacity-50"
            style="background:radial-gradient(60% 60% at 70% 20%, color-mix(in oklab,var(--accent) 35%,transparent), transparent)"></div>
 
       <div class="preview-window">
