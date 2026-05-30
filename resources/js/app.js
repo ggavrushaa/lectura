@@ -1,8 +1,5 @@
-// Тема: light/dark с сохранением в localStorage
-const saved = localStorage.getItem('theme');
-if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-}
+// Начальная тема выставляется инлайн-скриптом в <head> (без FOUC).
+// Здесь — только переключатель.
 window.toggleTheme = () => {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
