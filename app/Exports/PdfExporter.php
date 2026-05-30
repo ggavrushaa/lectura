@@ -23,6 +23,8 @@ class PdfExporter
 
         Browsershot::html($this->html($lecture))
             ->setChromePath(config('lectura.chrome_path'))
+            ->setNodeBinaryPath(config('lectura.node_path'))
+            ->setNpmBinaryPath(config('lectura.npm_path'))
             ->format('A4')
             ->showBackground()
             ->margins(10, 10, 10, 10)
