@@ -78,7 +78,9 @@ class ProcessLectureJobTest extends TestCase
 
         $lecture->refresh();
         $this->assertSame(LectureStatus::Failed, $lecture->status);
-        $this->assertStringContainsString('boom', $lecture->error_message);
+        // Технические детали не должны протекать к пользователю — только понятное сообщение.
+        $this->assertStringNotContainsString('boom', $lecture->error_message);
+        $this->assertStringContainsString('распознать речь', $lecture->error_message);
     }
 
     protected function tearDown(): void

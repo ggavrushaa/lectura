@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -94,9 +95,15 @@ class ProcessLectureJob implements ShouldQueue
                 $disk->deleteDirectory("lectures/{$lecture->id}/work");
             }
         } catch (Throwable $e) {
+            // Технические детали — в лог; пользователю — понятное сообщение по этапу.
+            Log::error('Lecture processing failed', [
+                'lecture_id' => $lecture->id,
+                'stage' => $lecture->status->value,
+                'error' => $e->getMessage(),
+            ]);
             $lecture->update([
                 'status' => LectureStatus::Failed,
-                'error_message' => $e->getMessage(),
+                'error_message' => $this->friendlyError($lecture->status),
             ]);
             throw $e; // пусть Horizon ретраит
         }
@@ -108,6 +115,19 @@ class ProcessLectureJob implements ShouldQueue
     }
 
     /**
+     * Человеко-понятное сообщение в зависимости от этапа, на котором упала обработка.
+     */
+    private function friendlyError(LectureStatus $stage): string
+    {
+        return match ($stage) {
+            LectureStatus::Transcribing => 'Не удалось распознать речь в записи. Проверьте, что это аудиофайл с разборчивым голосом, и попробуйте снова.',
+            LectureStatus::Summarizing => 'Не удалось составить конспект по расшифровке. Попробуйте повторить через минуту.',
+            LectureStatus::Rendering => 'Конспект готов, но не удалось оформить схемы. Попробуйте повторить.',
+            default => 'Не удалось обработать запись. Попробуйте повторить, а если ошибка повторится — загрузите файл заново.',
+        };
+    }
+
+    /**
      * Вызывается Horizon при окончательном провале (включая таймаут и фатальные
      * ошибки, которые не ловит try/catch внутри handle). Гарантирует, что лекция
      * не зависнет в промежуточном статусе.
@@ -116,9 +136,13 @@ class ProcessLectureJob implements ShouldQueue
     {
         $lecture = Lecture::find($this->lectureId);
         if ($lecture && ! $lecture->status->isTerminal()) {
+            Log::error('Lecture job failed permanently', [
+                'lecture_id' => $this->lectureId,
+                'error' => $e?->getMessage(),
+            ]);
             $lecture->update([
                 'status' => LectureStatus::Failed,
-                'error_message' => $e?->getMessage() ?? 'Обработка прервана (таймаут или нехватка памяти).',
+                'error_message' => $this->friendlyError($lecture->status),
             ]);
         }
     }

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Lectura' }}</title>
+    <title>{{ $title }}</title>
     <script>
         (function () {
             var s = localStorage.getItem('theme');
@@ -16,50 +16,35 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen grid lg:grid-cols-2">
-    {{-- Левая панель: брендинг (скрыта на мобильных) --}}
-    <aside class="hidden lg:flex relative flex-col justify-between p-12 overflow-hidden"
-           style="background:linear-gradient(150deg, var(--ink), color-mix(in oklab, var(--ink) 62%, var(--accent)));">
-        <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-30">
-            <div class="absolute -left-10 top-1/4 w-72 h-72 rounded-full blur-3xl" style="background:var(--accent); animation:float-slow 8s ease-in-out infinite"></div>
-            <div class="absolute right-0 bottom-10 w-80 h-80 rounded-full blur-3xl" style="background:#fff; opacity:.06"></div>
-        </div>
-        <a href="{{ route('home') }}" class="relative flex items-center gap-2.5 font-semibold text-lg text-white">
-            <span class="w-8 h-8 rounded-[10px] grid place-items-center font-bold" style="background:rgba(255,255,255,.14)">L</span>
+<body class="min-h-screen grid place-items-center px-5 py-10">
+
+    <button type="button" onclick="toggleTheme()" aria-label="Сменить тему" class="icon-btn fixed top-5 right-5 z-10">
+        <span class="block dark:hidden">☾</span><span class="hidden dark:block">☀</span>
+    </button>
+
+    <div class="w-full max-w-md anim-fade-up">
+        {{-- Брендинг --}}
+        <a href="{{ route('home') }}" class="flex items-center justify-center gap-2.5 font-semibold text-lg mb-7">
+            <span class="w-9 h-9 rounded-xl grid place-items-center text-white font-bold"
+                  style="background:linear-gradient(135deg, var(--ink), color-mix(in oklab, var(--ink) 70%, var(--accent)));">L</span>
             Lectura
         </a>
-        <div class="relative text-white">
-            <p class="font-serif-display text-3xl leading-snug mb-4" style="color:rgba(255,255,255,.96)">
-                «Запись лекции —<br>в стройный конспект.»
-            </p>
-            <p class="text-sm max-w-sm" style="color:rgba(255,255,255,.6)">
-                Загрузил аудио — получил структурированный конспект со схемами, готовый к скачиванию.
-            </p>
-        </div>
-        <div class="relative text-xs" style="color:rgba(255,255,255,.45)">Whisper · OpenRouter</div>
-    </aside>
 
-    {{-- Правая панель: форма --}}
-    <main class="flex flex-col items-center justify-center px-6 py-12 relative">
-        <button type="button" onclick="toggleTheme()" aria-label="Сменить тему" class="icon-btn absolute top-5 right-5">
-            <span class="block dark:hidden">☾</span><span class="hidden dark:block">☀</span>
-        </button>
-
-        <div class="w-full max-w-sm anim-fade-up">
-            <a href="{{ route('home') }}" class="lg:hidden flex items-center justify-center gap-2.5 font-semibold text-lg mb-8">
-                <span class="w-8 h-8 rounded-[10px] grid place-items-center text-white font-bold" style="background:var(--ink)">L</span>
-                Lectura
-            </a>
-
-            <div class="mb-7">
-                <h1 class="text-2xl font-bold tracking-tight">{{ $heading ?? 'Добро пожаловать' }}</h1>
-                @isset($subheading)
+        {{-- Карточка с формой --}}
+        <div class="card p-7 sm:p-9" style="box-shadow:var(--shadow-lg)">
+            <div class="mb-6 text-center">
+                <h1 class="text-2xl font-bold tracking-tight">{{ $heading }}</h1>
+                @if ($subheading)
                     <p class="text-sm mt-1.5" style="color:var(--muted)">{{ $subheading }}</p>
-                @endisset
+                @endif
             </div>
 
             {{ $slot }}
         </div>
-    </main>
+
+        <p class="text-center text-xs mt-6" style="color:var(--muted)">
+            Конспекты лекций из аудио за пару минут
+        </p>
+    </div>
 </body>
 </html>

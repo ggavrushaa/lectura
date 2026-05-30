@@ -1,3 +1,4 @@
+@props(['title' => 'Lectura', 'description' => null])
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Lectura' }}</title>
+    @isset($description)
+        <meta name="description" content="{{ $description }}">
+        <meta property="og:title" content="{{ $title ?? 'Lectura' }}">
+        <meta property="og:description" content="{{ $description }}">
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="ru_RU">
+        <meta name="twitter:card" content="summary_large_image">
+    @endisset
     {{-- Тему ставим до рендера, чтобы не было вспышки светлой темы --}}
     <script>
         (function () {
@@ -88,7 +97,7 @@
     <footer class="w-full border-t mt-auto" style="border-color:var(--line)">
         <div class="max-w-6xl mx-auto px-5 sm:px-7 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm" style="color:var(--muted)">
             <span>Lectura — конспекты лекций из аудио</span>
-            <span>Whisper · OpenRouter</span>
+            <span>© {{ date('Y') }}</span>
         </div>
     </footer>
 
