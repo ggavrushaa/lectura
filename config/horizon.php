@@ -128,6 +128,7 @@ return [
                 'balance' => 'auto',
                 'maxProcesses' => 3,
                 'tries' => 3,
+                'timeout' => 1860,    // > job timeout (1800) и < retry_after (1900)
             ],
         ],
         'local' => [
@@ -137,6 +138,7 @@ return [
                 'balance' => 'auto',
                 'maxProcesses' => 3,
                 'tries' => 3,
+                'timeout' => 1860,    // > job timeout (1800) и < retry_after (1900)
             ],
         ],
     ],
