@@ -20,13 +20,27 @@ class TranscriptionService
 
     private function transcribeSegment(string $path, ?string $language): string
     {
-        $response = $this->client()
-            ->attach('file', file_get_contents($path), basename($path))
-            ->post('/audio/transcriptions', array_filter([
-                'model' => config('services.groq.model'),
-                'language' => $language,
-                'response_format' => 'json',
-            ]));
+        // Передаём файл потоком (ресурс fopen), а не file_get_contents:
+        // загрузка сегмента целиком в строку + копия в multipart переполняет
+        // память PHP на длинных лекциях (множество сегментов).
+        $stream = fopen($path, 'r');
+        if ($stream === false) {
+            throw new RuntimeException("Не удалось открыть сегмент: {$path}");
+        }
+
+        try {
+            $response = $this->client()
+                ->attach('file', $stream, basename($path))
+                ->post('/audio/transcriptions', array_filter([
+                    'model' => config('services.groq.model'),
+                    'language' => $language,
+                    'response_format' => 'json',
+                ]));
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
 
         $response->throw();
 

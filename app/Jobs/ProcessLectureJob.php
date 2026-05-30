@@ -37,6 +37,9 @@ class ProcessLectureJob implements ShouldQueue
         SummaryService $summarizer,
         DiagramRenderer $diagrams,
     ): void {
+        // Обработка аудио/транскриптов прожорлива по памяти — поднимаем лимит.
+        @ini_set('memory_limit', '512M');
+
         $lecture = Lecture::findOrFail($this->lectureId);
 
         try {
@@ -102,5 +105,21 @@ class ProcessLectureJob implements ShouldQueue
     private function update(Lecture $lecture, LectureStatus $status, int $progress): void
     {
         $lecture->update(['status' => $status, 'progress' => $progress]);
+    }
+
+    /**
+     * Вызывается Horizon при окончательном провале (включая таймаут и фатальные
+     * ошибки, которые не ловит try/catch внутри handle). Гарантирует, что лекция
+     * не зависнет в промежуточном статусе.
+     */
+    public function failed(?Throwable $e): void
+    {
+        $lecture = Lecture::find($this->lectureId);
+        if ($lecture && ! $lecture->status->isTerminal()) {
+            $lecture->update([
+                'status' => LectureStatus::Failed,
+                'error_message' => $e?->getMessage() ?? 'Обработка прервана (таймаут или нехватка памяти).',
+            ]);
+        }
     }
 }
