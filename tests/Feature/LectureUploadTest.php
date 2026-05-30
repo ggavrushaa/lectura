@@ -37,6 +37,22 @@ class LectureUploadTest extends TestCase
         Queue::assertPushed(ProcessLectureJob::class);
     }
 
+    public function test_accepts_m4a_despite_video_mime(): void
+    {
+        // .m4a контейнеры finfo детектит как video/3gpp или video/mp4 —
+        // валидация по расширению должна их пропускать.
+        Storage::fake('local');
+        Queue::fake();
+        $user = User::factory()->create();
+
+        $file = UploadedFile::fake()->create('Бриф.m4a', 2048, 'video/mp4');
+
+        $this->actingAs($user)->post('/lectures', ['audio' => $file])
+            ->assertSessionHasNoErrors();
+        $this->assertSame(1, Lecture::count());
+        Queue::assertPushed(ProcessLectureJob::class);
+    }
+
     public function test_rejects_non_audio(): void
     {
         Storage::fake('local');

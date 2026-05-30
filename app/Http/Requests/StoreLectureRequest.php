@@ -16,9 +16,20 @@ class StoreLectureRequest extends FormRequest
         $maxKb = config('lectura.max_file_mb') * 1024;
 
         return [
-            'audio' => ['required', 'file', "max:{$maxKb}", 'mimetypes:audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/x-wav,audio/ogg'],
+            // Валидация по расширению (m4a/mp4-контейнеры finfo детектит как video/*,
+            // поэтому строгий mimetypes их ложно отклоняет). Реальная проверка
+            // содержимого — через ffprobe в AudioPreparer::probe() на этапе обработки.
+            'audio' => ['required', 'file', "max:{$maxKb}", 'extensions:mp3,m4a,mp4,wav,ogg,oga'],
             'detail_level' => ['nullable', 'in:short,medium,detailed'],
             'with_diagrams' => ['nullable', 'boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'audio.extensions' => 'Поддерживаются аудиофайлы: MP3, M4A, WAV, OGG.',
+            'audio.max' => 'Файл слишком большой (максимум :max КБ).',
         ];
     }
 }
