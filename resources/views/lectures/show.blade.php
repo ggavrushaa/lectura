@@ -1,7 +1,7 @@
 <x-lectura-layout :title="$lecture->title">
 @php $terminal = in_array($lecture->status->value, ['done','failed']); @endphp
 
-<div id="lecture" data-status-url="{{ route('lectures.status', $lecture) }}" data-terminal="{{ $terminal ? '1':'0' }}">
+<div id="lecture" data-status-url="{{ route('lectures.status', $lecture) }}" data-status-route="lectures.status" data-terminal="{{ $terminal ? '1':'0' }}">
 
   @if ($lecture->status->value === 'failed')
     <div class="rounded-2xl p-6 border text-center" style="background:var(--panel);border-color:var(--line)">
