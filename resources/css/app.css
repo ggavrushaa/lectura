@@ -89,6 +89,38 @@ body::after{
   font-family:Newsreader,serif; font-style:italic; font-size:1.05em;
 }
 
+/* ---------- Выноски-акценты (callouts) ---------- */
+.callout{
+  display:flex; gap:.75rem; padding:.9rem 1.1rem; border-radius:.75rem; margin:1.1em 0;
+  font-style:normal; font-family:Inter,sans-serif; font-size:.95em; line-height:1.6;
+  border:1px solid var(--line);
+}
+.callout .callout-ic{ flex:none; font-size:1.1em; line-height:1.5; }
+.callout .callout-body{ color:var(--ink2); }
+.callout .callout-body strong{ display:block; margin-bottom:.15rem; color:var(--ink); font-weight:600; }
+.callout-important{ background:color-mix(in oklab,var(--danger) 8%,var(--panel)); border-color:color-mix(in oklab,var(--danger) 30%,transparent); }
+.callout-important .callout-ic{ color:var(--danger); }
+.callout-note{ background:var(--accent-soft); border-color:var(--accent-line); }
+.callout-note .callout-ic{ color:var(--accent); }
+.callout-example{ background:var(--inset); }
+.callout-example .callout-ic{ color:var(--muted); }
+.callout-tip{ background:var(--ok-soft); border-color:color-mix(in oklab,var(--ok) 30%,transparent); }
+.callout-tip .callout-ic{ color:var(--ok); }
+
+/* KaTeX: вписать в тему */
+.prose-content .katex{ font-size:1.05em; }
+.prose-content .katex-display{ margin:1.1em 0; overflow-x:auto; overflow-y:hidden; padding:.2em 0; }
+
+/* прогресс-бар чтения */
+#read-progress{ position:fixed; top:0; left:0; height:3px; width:0; z-index:60; background:var(--accent); transition:width .1s linear; }
+
+/* активный пункт оглавления */
+.toc-link.active{ background:var(--accent-soft); color:var(--accent); font-weight:600; }
+
+/* кнопка копирования */
+.copy-btn{ opacity:0; transition:opacity .15s ease; }
+.group:hover .copy-btn, .copy-btn:focus{ opacity:1; }
+
 /* ---------- Утилиты компонентов ---------- */
 .card{
   background:var(--panel); border:1px solid var(--line); border-radius:1rem;

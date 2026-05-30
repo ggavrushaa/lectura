@@ -77,21 +77,37 @@ class SummaryService
             : 'Не добавляй диаграммы (diagram_mermaid всегда null).';
 
         return <<<PROMPT
-        Ты — ассистент, делающий учебные конспекты из расшифровок лекций на русском языке.
+        Ты — ассистент, делающий богатые, информативные учебные конспекты из расшифровок
+        лекций на русском языке. Пиши понятно, по делу, без «воды» из устной речи.
         {$detail}
         {$diagrams}
+
+        Дополнительно:
+        - subject: предмет/тема одним-двумя словами (например «Машинное обучение»).
+        - level: уровень лекции — "intro" (вводный), "intermediate" (средний) или "advanced".
+        - В content_markdown используй выноски через цитату-блок с префиксом-меткой
+          в начале строки: "> [!important] ...", "> [!note] ...", "> [!example] ...",
+          "> [!tip] ...". Используй их там, где есть важная мысль, пример или совет.
+        - Формулы оформляй в LaTeX: внутри текста $...$, отдельной строкой $$...$$.
+        - glossary: ключевые термины С КРАТКИМИ определениями (1-2 предложения каждое).
+        - quiz: 3-5 вопросов для самопроверки с короткими ответами.
+
         Верни СТРОГО JSON-объект по схеме (без markdown-ограждений):
         {
           "title": string,
+          "subject": string,
+          "level": "intro" | "intermediate" | "advanced",
           "summary": string,                 // 2-4 предложения
           "reading_time_min": number,
           "sections": [{
             "heading": string,
-            "content_markdown": string,       // markdown: списки, выделения
+            "content_markdown": string,       // markdown: списки, выделения, выноски, формулы
             "terms": string[],
             "diagram_mermaid": string|null
           }],
+          "glossary": [{ "term": string, "definition": string }],
           "key_terms": string[],
+          "quiz": [{ "question": string, "answer": string }],
           "takeaways": string[]
         }
         PROMPT;

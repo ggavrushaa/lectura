@@ -28,7 +28,14 @@ class SummaryMarkdownBuilder
             }
         }
 
-        if ($s->keyTerms) {
+        if ($s->glossary) {
+            $out[] = '## Глоссарий';
+            $out[] = '';
+            foreach ($s->glossary as $g) {
+                $out[] = "**{$g['term']}** — {$g['definition']}";
+                $out[] = '';
+            }
+        } elseif ($s->keyTerms) {
             $out[] = '## Ключевые термины';
             $out[] = '';
             $out[] = implode(', ', $s->keyTerms);
@@ -40,6 +47,19 @@ class SummaryMarkdownBuilder
             $out[] = '';
             foreach ($s->takeaways as $t) {
                 $out[] = "- {$t}";
+            }
+            $out[] = '';
+        }
+
+        if ($s->quiz) {
+            $out[] = '## Вопросы для самопроверки';
+            $out[] = '';
+            foreach ($s->quiz as $i => $q) {
+                $n = $i + 1;
+                $out[] = "{$n}. {$q['question']}";
+                if (! empty($q['answer'])) {
+                    $out[] = "   - _Ответ:_ {$q['answer']}";
+                }
             }
             $out[] = '';
         }
