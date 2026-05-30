@@ -72,11 +72,12 @@ REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 ```
 
-**Предпосылки для Horizon+Redis (см. §11, риски Q-1…Q-3):**
-- Redis: `brew install redis && brew services start redis` (бесплатно, без Herd Pro).
-- Horizon требует PHP-расширений **`pcntl` и `posix`**. В сборке Homebrew PHP 8.4
-  `.so` присутствуют, но не подключены в CLI — включаем через `conf.d`
-  (`extension=pcntl`, `extension=posix`) для CLI-процесса `php artisan horizon`.
+**Предпосылки для Horizon+Redis — проверено, всё на месте:**
+- ✅ Redis установлен (`/opt/homebrew/bin/redis-server`) и запущен (`redis-cli ping → PONG`).
+- ✅ `pcntl` и `posix` включены в активном PHP 8.4 (`pcntl_fork`/`posix_kill` доступны,
+  `disable_functions` пуст) — Horizon заработает без правок конфигурации.
+- Ставим только composer-пакеты: `predis/predis` (клиент, т.к. расширения phpredis нет)
+  и `laravel/horizon`.
 
 ## 3. Архитектура и поток данных
 
@@ -224,9 +225,8 @@ id, name, email, password, timestamps.
 ## 9. Этапы реализации (для плана)
 
 1. Скаффолд Laravel + Herd (`lectura.test`), git init, **MySQL** (создать БД `lectura`),
-   Breeze (auth). Установить и запустить **Redis**, включить `pcntl`/`posix` для CLI,
-   поставить **Horizon** (`composer require laravel/horizon`, `horizon:install`),
-   гейт на `/horizon`.
+   Breeze (auth). Redis уже запущен → `composer require predis/predis laravel/horizon`,
+   `horizon:install`, `QUEUE_CONNECTION=redis`, гейт на `/horizon`.
 2. Тема (светлая/тёмная) + базовый layout/дизайн-система из макета.
 3. Модель `Lecture` + миграция + политика владельца.
 4. Загрузка аудио (форма, валидация, сохранение, создание записи).
@@ -246,15 +246,15 @@ id, name, email, password, timestamps.
 Критический разбор спеки — что может сломаться и как это закрыто.
 
 ### Очереди / инфраструктура (Horizon + Redis)
-- **Q-1. Horizon/воркер не запущен → лекции вечно `pending`.** Реальный риск local-dev.
-  Решение: явная инструкция `php artisan horizon`; на странице лекции — детектор
-  «застряла» (если `updated_at` давно не менялся) с подсказкой; в README — запуск.
-- **Q-2. `pcntl`/`posix` отключены в CLI PHP → Horizon не стартует.** Проверено:
-  `.so` есть в Homebrew PHP, но не подключены. Решение: включить через `conf.d`.
-  **Fallback:** если включить нельзя — драйвер `redis` + обычный `php artisan queue:work`
-  (pcntl не нужен), без дашборда Horizon.
-- **Q-3. Redis не установлен (Herd Pro only).** Решение: `brew install redis`
-  (бесплатно). Без Redis — деградация на `QUEUE_CONNECTION=database` (без Horizon).
+- **Q-1. Horizon не запущен → лекции вечно `pending`.** Главный операционный риск
+  (остаётся актуальным). Решение: явная инструкция `php artisan horizon`; на странице
+  лекции — детектор «застряла» (если `updated_at` давно не менялся) с подсказкой;
+  в README — запуск.
+- **Q-2. `pcntl`/`posix` для Horizon.** ✅ Проверено — уже включены в активном PHP 8.4,
+  правок не требуется. **Fallback** на случай иной машины: `redis` + `queue:work`
+  (без pcntl), без дашборда.
+- **Q-3. Redis.** ✅ Проверено — установлен и запущен (`PONG`). Fallback на иной
+  машине: `brew install redis` или деградация на `QUEUE_CONNECTION=database`.
 
 ### Внешние AI-API
 - **A-1. Контекст LLM на 2-часовой лекции (~30–45k токенов).** Решение: дефолт —
