@@ -1,7 +1,7 @@
 <x-lectura-layout :title="$lecture->title">
 @php $terminal = in_array($lecture->status->value, ['done','failed']); @endphp
 
-<div id="lecture" data-status-url="{{ route('lectures.status', $lecture) }}" data-route="lectures.status" data-terminal="{{ $terminal ? '1':'0' }}">
+<div id="lecture" data-status-url="{{ route('lectures.status', $lecture) }}" data-terminal="{{ $terminal ? '1':'0' }}">
 
   @if ($lecture->status->value === 'failed')
     <div class="rounded-2xl p-6 border text-center" style="background:var(--panel);border-color:var(--line)">
@@ -37,7 +37,7 @@
 
         @foreach (($lecture->summary_json['sections'] ?? []) as $section)
           <h2 class="font-serif-display text-2xl mt-8 mb-2">{{ $section['heading'] }}</h2>
-          <div class="prose-content">{!! \Illuminate\Support\Str::markdown($section['content_markdown'] ?? '') !!}</div>
+          <div class="prose-content">{!! \Illuminate\Support\Str::markdown($section['content_markdown'] ?? '', ['html_input' => 'strip', 'allow_unsafe_links' => false]) !!}</div>
           @if (!empty($section['diagram_svg']) && is_file($section['diagram_svg']))
             <div class="my-4 rounded-xl p-4" style="background:var(--inset)">
               {!! file_get_contents($section['diagram_svg']) !!}
