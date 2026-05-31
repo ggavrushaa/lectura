@@ -68,6 +68,25 @@ class SummaryServiceTest extends TestCase
         });
     }
 
+    public function test_prompt_includes_table_and_chart_instructions(): void
+    {
+        config(['services.openrouter.key' => 'k']);
+
+        Http::fake(['openrouter.ai/*' => Http::response($this->payload([
+            'title' => 'T', 'summary' => 'S', 'reading_time_min' => 1,
+            'sections' => [], 'key_terms' => [], 'takeaways' => [],
+        ]))]);
+
+        app(SummaryService::class)->summarize('текст', new SummaryOptions());
+
+        Http::assertSent(function ($req) {
+            $system = $req->data()['messages'][0]['content'];
+            return str_contains($system, 'таблиц')
+                && str_contains($system, 'pie')
+                && str_contains($system, 'xychart');
+        });
+    }
+
     public function test_repairs_once_when_first_response_is_garbage(): void
     {
         config(['services.openrouter.key' => 'k']);
