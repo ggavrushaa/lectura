@@ -71,6 +71,12 @@
       $hasFormulas = false;
       foreach (($sj['sections'] ?? []) as $s) { if (preg_match('/\$.+\$|\\\\\(|\\\\\[/', $s['content_markdown'] ?? '')) { $hasFormulas = true; break; } }
       $levelLabels = ['intro' => 'Вводный', 'intermediate' => 'Средний', 'advanced' => 'Продвинутый'];
+      $glossSlugs = [];
+      foreach (($sj['glossary'] ?? []) as $g) {
+        if (!empty($g['term'])) {
+          $glossSlugs[mb_strtolower(trim($g['term']))] = \Illuminate\Support\Str::slug($g['term']) ?: md5($g['term']);
+        }
+      }
     @endphp
 
     <div id="read-progress"></div>
@@ -145,11 +151,29 @@
                       title="Скопировать раздел"
                       data-copy-section="{{ base64_encode(($section['heading'] ?? '')."\n\n".($section['content_markdown'] ?? '')) }}">⧉</button>
             </div>
-            <div class="prose-content">{!! \App\Support\ConspectusRenderer::html($section['content_markdown'] ?? '') !!}</div>
+            <div x-data="{ exp:false, tall:false }"
+                 x-init="$nextTick(() => tall = $refs.body.scrollHeight > 560)"
+                 class="relative">
+              <div x-ref="body" class="prose-content"
+                   :style="tall && !exp ? 'max-height:520px;overflow:hidden' : ''">{!! \App\Support\ConspectusRenderer::html($section['content_markdown'] ?? '') !!}</div>
+              <div x-show="tall && !exp" x-cloak class="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
+                   style="background:linear-gradient(to bottom, transparent, var(--panel))"></div>
+              <button type="button" x-show="tall" x-cloak @click="exp = !exp"
+                      class="mt-2 text-sm font-medium" style="color:var(--accent)">
+                <span x-show="!exp">Читать дальше ⌄</span><span x-show="exp">Свернуть ⌃</span>
+              </button>
+            </div>
 
             @if (!empty($section['terms']))
               <div class="flex flex-wrap gap-1.5 mt-4">
-                @foreach ($section['terms'] as $term)<span class="pill pill-muted">{{ $term }}</span>@endforeach
+                @foreach ($section['terms'] as $term)
+                  @php $tslug = $glossSlugs[mb_strtolower(trim($term))] ?? null; @endphp
+                  @if ($tslug)
+                    <a href="#glos-{{ $tslug }}" class="pill pill-muted" style="text-decoration:none">{{ $term }}</a>
+                  @else
+                    <span class="pill pill-muted">{{ $term }}</span>
+                  @endif
+                @endforeach
               </div>
             @endif
 
@@ -167,7 +191,7 @@
             <h2 class="font-serif-display text-2xl mb-4 pb-2" style="border-bottom:1px solid var(--line)">Глоссарий</h2>
             <dl class="space-y-3">
               @foreach ($sj['glossary'] as $g)
-                <div class="rounded-xl p-4" style="background:var(--inset); border:1px solid var(--line)">
+                <div id="glos-{{ \Illuminate\Support\Str::slug($g['term'] ?? '') ?: md5($g['term'] ?? '') }}" class="rounded-xl p-4 scroll-mt-24" style="background:var(--inset); border:1px solid var(--line)">
                   <dt class="font-semibold mb-0.5">{{ $g['term'] ?? '' }}</dt>
                   <dd class="text-sm" style="color:var(--muted)">{{ $g['definition'] ?? '' }}</dd>
                 </div>
