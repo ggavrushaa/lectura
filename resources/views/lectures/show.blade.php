@@ -71,10 +71,11 @@
       $hasFormulas = false;
       foreach (($sj['sections'] ?? []) as $s) { if (preg_match('/\$.+\$|\\\\\(|\\\\\[/', $s['content_markdown'] ?? '')) { $hasFormulas = true; break; } }
       $levelLabels = ['intro' => 'Вводный', 'intermediate' => 'Средний', 'advanced' => 'Продвинутый'];
+      $glossSlug = fn ($t) => \Illuminate\Support\Str::slug($t) ?: md5($t);
       $glossSlugs = [];
       foreach (($sj['glossary'] ?? []) as $g) {
         if (!empty($g['term'])) {
-          $glossSlugs[mb_strtolower(trim($g['term']))] = \Illuminate\Support\Str::slug($g['term']) ?: md5($g['term']);
+          $glossSlugs[mb_strtolower(trim($g['term']))] = $glossSlug($g['term']);
         }
       }
     @endphp
@@ -191,7 +192,8 @@
             <h2 class="font-serif-display text-2xl mb-4 pb-2" style="border-bottom:1px solid var(--line)">Глоссарий</h2>
             <dl class="space-y-3">
               @foreach ($sj['glossary'] as $g)
-                <div id="glos-{{ \Illuminate\Support\Str::slug($g['term'] ?? '') ?: md5($g['term'] ?? '') }}" class="rounded-xl p-4 scroll-mt-24" style="background:var(--inset); border:1px solid var(--line)">
+                @continue(empty($g['term']))
+                <div id="glos-{{ $glossSlug($g['term'] ?? '') }}" class="rounded-xl p-4 scroll-mt-24" style="background:var(--inset); border:1px solid var(--line)">
                   <dt class="font-semibold mb-0.5">{{ $g['term'] ?? '' }}</dt>
                   <dd class="text-sm" style="color:var(--muted)">{{ $g['definition'] ?? '' }}</dd>
                 </div>
