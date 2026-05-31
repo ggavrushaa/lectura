@@ -26,4 +26,12 @@ class ConspectusRendererTest extends TestCase
         $html = ConspectusRenderer::html('**жирный** текст');
         $this->assertStringContainsString('<strong>жирный</strong>', $html);
     }
+
+    public function test_renders_exam_callout(): void
+    {
+        $html = ConspectusRenderer::html("> [!exam] Запомнить к зачёту\n\nДалее.");
+        $this->assertStringContainsString('callout-exam', $html);
+        $this->assertStringContainsString('К экзамену', $html);
+        $this->assertStringContainsString('Запомнить к зачёту', $html);
+    }
 }

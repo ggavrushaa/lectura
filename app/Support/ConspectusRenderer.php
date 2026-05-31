@@ -15,6 +15,7 @@ class ConspectusRenderer
         'note' => ['◆', 'Заметка', 'callout-note'],
         'example' => ['▹', 'Пример', 'callout-example'],
         'tip' => ['✦', 'Совет', 'callout-tip'],
+        'exam' => ['★', 'К экзамену', 'callout-exam'],
     ];
 
     public static function html(string $markdown): string
