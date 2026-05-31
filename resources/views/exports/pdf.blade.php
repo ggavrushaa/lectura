@@ -25,10 +25,11 @@
   /* выноски */
   .callout { padding:8pt 11pt; border-radius:7px; margin:9pt 0; border:1px solid #e9e9e6; page-break-inside:avoid; }
   .callout .clbl { font-weight:bold; display:block; margin-bottom:2pt; }
-  .c-important { background:#fbeae8; border-color:#e8b9b3; } .c-important .clbl { color:#c0392b; }
-  .c-note { background:#fdf3e7; border-color:#f0ddc2; } .c-note .clbl { color:#a85408; }
-  .c-example { background:#f7f7f5; } .c-example .clbl { color:#666; }
-  .c-tip { background:#eaf6f1; border-color:#bfe3d4; } .c-tip .clbl { color:#2e8b6f; }
+  .callout-important { background:#fbeae8; border-color:#e8b9b3; } .callout-important .clbl { color:#c0392b; }
+  .callout-note { background:#fdf3e7; border-color:#f0ddc2; } .callout-note .clbl { color:#a85408; }
+  .callout-example { background:#f7f7f5; } .callout-example .clbl { color:#666; }
+  .callout-tip { background:#eaf6f1; border-color:#bfe3d4; } .callout-tip .clbl { color:#2e8b6f; }
+  .callout-exam { background:#f3efff; border-color:#c9bbff; } .callout-exam .clbl { color:#6b46d9; }
   /* глоссарий */
   .gloss { background:#f7f7f5; border:1px solid #e9e9e6; border-radius:7px; padding:8pt 11pt; margin:6pt 0; page-break-inside:avoid; }
   .gloss dt { font-weight:bold; }
@@ -39,6 +40,9 @@
   .quiz-a { background:#eaf6f1; border-radius:6px; padding:6pt 9pt; margin-top:3pt; font-size:10.5pt; }
   .quiz-a .lbl { font-size:8pt; font-weight:bold; text-transform:uppercase; color:#2e8b6f; letter-spacing:.5pt; }
   .foot { margin-top:24pt; padding-top:8pt; border-top:1px solid #e9e9e6; color:#aaa; font-size:8.5pt; text-align:center; }
+  table { width:100%; border-collapse:collapse; margin:9pt 0; font-size:10pt; page-break-inside:avoid; }
+  th, td { border:1px solid #d9d9d4; padding:4pt 6pt; text-align:left; vertical-align:top; }
+  thead th { background:#f1f1ee; font-weight:bold; }
 </style>
 </head>
 <body>
