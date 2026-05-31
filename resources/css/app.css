@@ -89,6 +89,12 @@ body::after{
   font-family:Newsreader,serif; font-style:italic; font-size:1.05em;
 }
 
+/* ---------- Таблицы в конспекте ---------- */
+.prose-content table{ width:100%; border-collapse:collapse; margin:1em 0; font-size:.95em; display:block; overflow-x:auto; }
+.prose-content thead th{ background:var(--inset); text-align:left; font-weight:600; color:var(--ink); }
+.prose-content th, .prose-content td{ border:1px solid var(--line); padding:.5rem .7rem; vertical-align:top; }
+.prose-content tbody tr:nth-child(even){ background:color-mix(in oklab,var(--inset) 50%,transparent); }
+
 /* ---------- Выноски-акценты (callouts) ---------- */
 .callout{
   display:flex; gap:.75rem; padding:.9rem 1.1rem; border-radius:.75rem; margin:1.1em 0;
@@ -106,6 +112,8 @@ body::after{
 .callout-example .callout-ic{ color:var(--muted); }
 .callout-tip{ background:var(--ok-soft); border-color:color-mix(in oklab,var(--ok) 30%,transparent); }
 .callout-tip .callout-ic{ color:var(--ok); }
+.callout-exam{ background:color-mix(in oklab,var(--accent) 6%,var(--panel)); border-color:color-mix(in oklab,#7c5cff 35%,transparent); }
+.callout-exam .callout-ic{ color:#7c5cff; }
 
 /* KaTeX: вписать в тему */
 .prose-content .katex{ font-size:1.05em; }
