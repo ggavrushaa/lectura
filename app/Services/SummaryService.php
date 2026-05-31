@@ -17,14 +17,17 @@ class SummaryService
             ['role' => 'user', 'content' => $this->userPrompt($transcript)],
         ];
 
-        $content = $this->call($messages);
+        $maxTokens = config('services.openrouter.max_tokens.'.$options->detailLevel->value);
+        $maxTokens = is_numeric($maxTokens) ? (int) $maxTokens : null;
+
+        $content = $this->call($messages, $maxTokens);
         $data = $this->extractJson($content);
 
         if ($data === null) {
             // repair-retry: просим вернуть строго JSON
             $messages[] = ['role' => 'assistant', 'content' => $content];
             $messages[] = ['role' => 'user', 'content' => 'Верни ТОЛЬКО валидный JSON по схеме, без пояснений и markdown-ограждений.'];
-            $data = $this->extractJson($this->call($messages));
+            $data = $this->extractJson($this->call($messages, $maxTokens));
         }
 
         if ($data === null) {
@@ -34,15 +37,20 @@ class SummaryService
         return LectureSummary::fromArray($data);
     }
 
-    private function call(array $messages): string
+    private function call(array $messages, ?int $maxTokens = null): string
     {
-        $response = $this->client()->post('/chat/completions', [
+        $payload = [
             'model' => config('services.openrouter.model'),
             'models' => [config('services.openrouter.fallback')],
             'messages' => $messages,
             'response_format' => ['type' => 'json_object'],
             'temperature' => 0.3,
-        ]);
+        ];
+        if ($maxTokens !== null) {
+            $payload['max_tokens'] = $maxTokens;
+        }
+
+        $response = $this->client()->post('/chat/completions', $payload);
 
         $response->throw();
 

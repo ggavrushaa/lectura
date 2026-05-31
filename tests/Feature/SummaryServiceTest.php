@@ -30,6 +30,23 @@ class SummaryServiceTest extends TestCase
         $this->assertCount(1, $summary->sections);
     }
 
+    public function test_sends_detailed_max_tokens(): void
+    {
+        config(['services.openrouter.key' => 'k']);
+        config(['services.openrouter.max_tokens' => ['short' => 2500, 'medium' => 4500, 'detailed' => 9000]]);
+
+        Http::fake(['openrouter.ai/*' => Http::response($this->payload([
+            'title' => 'T', 'summary' => 'S', 'reading_time_min' => 1,
+            'sections' => [], 'key_terms' => [], 'takeaways' => [],
+        ]))]);
+
+        app(SummaryService::class)->summarize('текст', new SummaryOptions(
+            detailLevel: \App\Enums\DetailLevel::Detailed,
+        ));
+
+        Http::assertSent(fn ($req) => ($req->data()['max_tokens'] ?? null) === 9000);
+    }
+
     public function test_repairs_once_when_first_response_is_garbage(): void
     {
         config(['services.openrouter.key' => 'k']);
