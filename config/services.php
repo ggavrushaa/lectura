@@ -47,6 +47,11 @@ return [
         'fallback' => env('OPENROUTER_FALLBACK_MODEL', 'anthropic/claude-sonnet-4'),
         'site_url' => env('OPENROUTER_SITE_URL', 'https://lectura.test'),
         'base' => 'https://openrouter.ai/api/v1',
+        'max_tokens' => [
+            'short'    => (int) env('OPENROUTER_MAXTOK_SHORT', 2500),
+            'medium'   => (int) env('OPENROUTER_MAXTOK_MEDIUM', 4500),
+            'detailed' => (int) env('OPENROUTER_MAXTOK_DETAILED', 9000),
+        ],
     ],
 
     'google' => [
