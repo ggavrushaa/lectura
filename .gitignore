@@ -30,3 +30,8 @@ Thumbs.db
 /docs/superpowers/
 /Claude outputs/
 /mcp-inspector.json
+bootstrap/compiled.php
+app/storage/
+public_html/storage
+public_html/hot
+/.vagrant
