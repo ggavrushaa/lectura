@@ -25,3 +25,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/.claude/
+/.ai/mcp/
+/docs/superpowers/
+/Claude outputs/
+/mcp-inspector.json
