@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\DetailLevel;
 use App\Services\SummaryService;
 use App\Support\SummaryOptions;
 use Illuminate\Support\Facades\Http;
@@ -24,7 +25,7 @@ class SummaryServiceTest extends TestCase
             'key_terms' => ['x'], 'takeaways' => ['y'],
         ]))]);
 
-        $summary = app(SummaryService::class)->summarize('текст', new SummaryOptions());
+        $summary = app(SummaryService::class)->summarize('текст', new SummaryOptions);
 
         $this->assertSame('Лекция', $summary->title);
         $this->assertCount(1, $summary->sections);
@@ -41,7 +42,7 @@ class SummaryServiceTest extends TestCase
         ]))]);
 
         app(SummaryService::class)->summarize('текст', new SummaryOptions(
-            detailLevel: \App\Enums\DetailLevel::Detailed,
+            detailLevel: DetailLevel::Detailed,
         ));
 
         Http::assertSent(fn ($req) => ($req->data()['max_tokens'] ?? null) === 9000);
@@ -57,11 +58,12 @@ class SummaryServiceTest extends TestCase
         ]))]);
 
         app(SummaryService::class)->summarize('текст', new SummaryOptions(
-            detailLevel: \App\Enums\DetailLevel::Detailed,
+            detailLevel: DetailLevel::Detailed,
         ));
 
         Http::assertSent(function ($req) {
             $system = $req->data()['messages'][0]['content'];
+
             return str_contains($system, 'Подробный конспект')
                 && str_contains($system, 'пример')
                 && str_contains($system, 'почему');
@@ -77,13 +79,50 @@ class SummaryServiceTest extends TestCase
             'sections' => [], 'key_terms' => [], 'takeaways' => [],
         ]))]);
 
-        app(SummaryService::class)->summarize('текст', new SummaryOptions());
+        app(SummaryService::class)->summarize('текст', new SummaryOptions);
 
         Http::assertSent(function ($req) {
             $system = $req->data()['messages'][0]['content'];
+
             return str_contains($system, 'таблиц')
                 && str_contains($system, 'pie')
                 && str_contains($system, 'xychart');
+        });
+    }
+
+    public function test_prompt_requests_summary_in_detected_language(): void
+    {
+        config(['services.openrouter.key' => 'k']);
+
+        Http::fake(['openrouter.ai/*' => Http::response($this->payload([
+            'title' => 'T', 'summary' => 'S', 'reading_time_min' => 1,
+            'sections' => [], 'key_terms' => [], 'takeaways' => [],
+        ]))]);
+
+        app(SummaryService::class)->summarize('text', new SummaryOptions(language: 'en'));
+
+        Http::assertSent(function ($req) {
+            $system = $req->data()['messages'][0]['content'];
+
+            return str_contains($system, 'английском языке (English)');
+        });
+    }
+
+    public function test_prompt_falls_back_to_transcript_language_when_unknown(): void
+    {
+        config(['services.openrouter.key' => 'k']);
+
+        Http::fake(['openrouter.ai/*' => Http::response($this->payload([
+            'title' => 'T', 'summary' => 'S', 'reading_time_min' => 1,
+            'sections' => [], 'key_terms' => [], 'takeaways' => [],
+        ]))]);
+
+        app(SummaryService::class)->summarize('text', new SummaryOptions);
+
+        Http::assertSent(function ($req) {
+            $system = $req->data()['messages'][0]['content'];
+
+            return str_contains($system, 'на том же языке, на котором говорят в расшифровке');
         });
     }
 
@@ -99,7 +138,7 @@ class SummaryServiceTest extends TestCase
             ])),
         ]);
 
-        $summary = app(SummaryService::class)->summarize('текст', new SummaryOptions());
+        $summary = app(SummaryService::class)->summarize('текст', new SummaryOptions);
 
         $this->assertSame('OK', $summary->title);
         Http::assertSentCount(2);

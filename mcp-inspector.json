@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "lectura": {
+      "type": "stdio",
+      "command": "/Users/h.nikitin/Library/Application Support/Herd/bin/php84",
+      "args": [
+        "/Users/h.nikitin/Herd/lectura/artisan",
+        "mcp:start",
+        "lectura"
+      ],
+      "protocolEra": "modern"
+    }
+  }
+}

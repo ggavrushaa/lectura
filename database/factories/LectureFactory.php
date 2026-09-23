@@ -17,7 +17,7 @@ class LectureFactory extends Factory
             'original_filename' => 'lecture.mp3',
             'audio_path' => 'lectures/test/audio.mp3',
             'duration_seconds' => 2880,
-            'language' => 'ru',
+            'language' => null,
             'status' => LectureStatus::Pending,
             'progress' => 0,
             'with_diagrams' => true,

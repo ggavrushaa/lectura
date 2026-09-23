@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Language;
 use App\Support\LectureSummary;
 use App\Support\SummaryOptions;
 use Illuminate\Http\Client\PendingRequest;
@@ -26,7 +27,7 @@ class SummaryService
         if ($data === null) {
             // repair-retry: просим вернуть строго JSON
             $messages[] = ['role' => 'assistant', 'content' => $content];
-            $messages[] = ['role' => 'user', 'content' => 'Верни ТОЛЬКО валидный JSON по схеме, без пояснений и markdown-ограждений.'];
+            $messages[] = ['role' => 'user', 'content' => 'Верни ТОЛЬКО валидный JSON по схеме, без пояснений и markdown-ограждений. Язык конспекта не меняй.'];
             $data = $this->extractJson($this->call($messages, $maxTokens));
         }
 
@@ -94,14 +95,17 @@ class SummaryService
                 .'— diagram_mermaid = null. Если схема не нужна — null.'
             : 'Не добавляй диаграммы (diagram_mermaid всегда null).';
 
+        $language = Language::instruction($o->language);
+
         return <<<PROMPT
-        Ты — ассистент, делающий богатые, информативные учебные конспекты из расшифровок
-        лекций на русском языке. Пиши понятно, по делу, без «воды» из устной речи.
+        Ты — ассистент, делающий богатые, информативные учебные конспекты из расшифровок лекций.
+        Пиши понятно, по делу, без «воды» из устной речи.
+        {$language}
         {$detail}
         {$diagrams}
 
         Дополнительно:
-        - subject: предмет/тема одним-двумя словами (например «Машинное обучение»).
+        - subject: предмет/тема одним-двумя словами на языке конспекта (например «Машинное обучение»).
         - level: уровень лекции — "intro" (вводный), "intermediate" (средний) или "advanced".
         - В content_markdown используй выноски через цитату-блок с префиксом-меткой
           в начале строки: "> [!important] ...", "> [!note] ...", "> [!example] ...",

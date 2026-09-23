@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "lectura": {
+      "command": "/Users/h.nikitin/Library/Application Support/Herd/bin/php84",
+      "args": [
+        "${CLAUDE_PROJECT_DIR}/artisan",
+        "mcp:start",
+        "lectura"
+      ]
+    }
+  }
+}

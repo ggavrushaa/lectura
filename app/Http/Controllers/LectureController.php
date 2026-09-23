@@ -43,7 +43,6 @@ class LectureController extends Controller
             'title' => pathinfo($original, PATHINFO_FILENAME),
             'original_filename' => $original,
             'status' => LectureStatus::Pending,
-            'language' => 'ru',
             'with_diagrams' => $request->boolean('with_diagrams', true),
             'detail_level' => DetailLevel::from($request->input('detail_level', 'medium')),
         ]);

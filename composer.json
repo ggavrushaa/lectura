@@ -9,6 +9,7 @@
         "php": "^8.3",
         "laravel/framework": "^13.8",
         "laravel/horizon": "^5.47",
+        "laravel/mcp": "^1.0",
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
         "phpoffice/phpword": "^1.4",

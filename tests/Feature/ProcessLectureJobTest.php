@@ -10,6 +10,7 @@ use App\Services\DiagramRenderer;
 use App\Services\SummaryService;
 use App\Services\TranscriptionService;
 use App\Support\LectureSummary;
+use App\Support\TranscriptionResult;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -31,12 +32,12 @@ class ProcessLectureJobTest extends TestCase
         $this->mock(AudioPreparer::class, fn ($m) => $m
             ->shouldReceive('prepare')->andReturn(['/tmp/seg0.mp3']));
         $this->mock(TranscriptionService::class, fn ($m) => $m
-            ->shouldReceive('transcribe')->andReturn('расшифровка'));
+            ->shouldReceive('transcribe')->andReturn(new TranscriptionResult('расшифровка', 'en')));
         $this->mock(SummaryService::class, fn ($m) => $m
             ->shouldReceive('summarize')->andReturn(LectureSummary::fromArray([
                 'title' => 'Готовая лекция', 'summary' => 'S', 'reading_time_min' => 4,
                 'sections' => [['heading' => 'H', 'content_markdown' => 'C',
-                                'terms' => [], 'diagram_mermaid' => 'graph LR; A-->B']],
+                    'terms' => [], 'diagram_mermaid' => 'graph LR; A-->B']],
                 'key_terms' => ['t'], 'takeaways' => ['w'],
             ])));
         $this->mock(DiagramRenderer::class, fn ($m) => $m

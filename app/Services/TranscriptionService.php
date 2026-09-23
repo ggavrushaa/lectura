@@ -2,23 +2,47 @@
 
 namespace App\Services;
 
+use App\Support\Language;
+use App\Support\TranscriptionResult;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 class TranscriptionService
 {
-    public function transcribe(array $segmentPaths, ?string $language = 'ru'): string
+    public function transcribe(array $segmentPaths, ?string $language = null): TranscriptionResult
     {
         $parts = [];
+        $detected = [];
+
         foreach ($segmentPaths as $path) {
-            $parts[] = trim($this->transcribeSegment($path, $language));
+            $segment = $this->transcribeSegment($path, $language);
+            $parts[] = trim($segment->text);
+
+            if ($segment->language !== null) {
+                $detected[$segment->language] = ($detected[$segment->language] ?? 0) + 1;
+            }
         }
 
-        return trim(implode(' ', array_filter($parts)));
+        return new TranscriptionResult(
+            trim(implode(' ', array_filter($parts))),
+            Language::normalize($language) ?? $this->majority($detected),
+        );
     }
 
-    private function transcribeSegment(string $path, ?string $language): string
+    /** Отдельный сегмент может быть тишиной или музыкой — берём язык большинства. */
+    private function majority(array $counts): ?string
+    {
+        if ($counts === []) {
+            return null;
+        }
+
+        arsort($counts);
+
+        return array_key_first($counts);
+    }
+
+    private function transcribeSegment(string $path, ?string $language): TranscriptionResult
     {
         // Передаём файл потоком (ресурс fopen), а не file_get_contents:
         // загрузка сегмента целиком в строку + копия в multipart переполняет
@@ -34,7 +58,7 @@ class TranscriptionService
                 ->post('/audio/transcriptions', array_filter([
                     'model' => config('services.groq.model'),
                     'language' => $language,
-                    'response_format' => 'json',
+                    'response_format' => 'verbose_json',
                 ]));
         } finally {
             if (is_resource($stream)) {
@@ -44,7 +68,10 @@ class TranscriptionService
 
         $response->throw();
 
-        return (string) ($response->json('text') ?? '');
+        return new TranscriptionResult(
+            (string) ($response->json('text') ?? ''),
+            Language::normalize($response->json('language')),
+        );
     }
 
     private function client(): PendingRequest

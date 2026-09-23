@@ -24,7 +24,9 @@ class ProcessLectureJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 1800;
+
     public array $backoff = [30, 120];
 
     public function __construct(public int $lectureId)
@@ -52,11 +54,14 @@ class ProcessLectureJob implements ShouldQueue
             $segments = $audio->prepare($absSource, $workDir);
 
             $this->update($lecture, LectureStatus::Transcribing, 35);
-            $transcript = $stt->transcribe($segments, $lecture->language);
-            $lecture->update(['transcript_text' => $transcript]);
+            $transcription = $stt->transcribe($segments, $lecture->language);
+            $lecture->update([
+                'transcript_text' => $transcription->text,
+                'language' => $transcription->language ?? $lecture->language,
+            ]);
 
             $this->update($lecture, LectureStatus::Summarizing, 60);
-            $summary = $summarizer->summarize($transcript, new SummaryOptions(
+            $summary = $summarizer->summarize($transcription->text, new SummaryOptions(
                 detailLevel: $lecture->detail_level,
                 withDiagrams: $lecture->with_diagrams,
                 language: $lecture->language,
